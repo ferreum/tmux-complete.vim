@@ -26,6 +26,6 @@ tr -s '[:space:]' '\n' |
 # remove surrounding non-word characters
 grep -o "\\w.*\\w" |
 # filter out words not beginning with pattern
-grep "$1" |
+grep $4 "$1" |
 # sort and remove duplicates
 sort -u
