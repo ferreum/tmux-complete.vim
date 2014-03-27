@@ -23,11 +23,11 @@ xargs -n1 tmux capture-pane $3 -p -t |
 sed -e 'p;s/[^a-zA-Z0-9_]/ /g' |
 # split on spaces
 tr -s '[:space:]' '\n' |
-# filter-out short words
-awk '{ if (length($0) >= 4) print }' |
 # remove surrounding non-word characters
 grep -o "\\w.*\\w" |
 # filter out words not beginning with pattern
 grep $4 "$1" |
+# filter-out short words
+awk '{ if (length($0) >= '"$(printf '%d' "${5:-4}")"') print }' |
 # sort and remove duplicates
 sort -u

@@ -9,12 +9,14 @@ function! tmuxcomplete#completions(base, capture_args)
     let base_pattern = '^' . escape(a:base, '*^$][.\') . '.'
     let list_args    = get(g:, 'tmux_complete_list_args', '-a')
     let grep_args    = get(g:, 'tmux_complete_grep_args', '')
+    let minlen       = get(g:, 'tmux_complete_minlength', '4')
 
     let command  = 'sh ' . shellescape(s:script)
     let command .=   ' ' . shellescape(base_pattern)
     let command .=   ' ' . shellescape(list_args)
     let command .=   ' ' . shellescape(a:capture_args)
     let command .=   ' ' . shellescape(grep_args)
+    let command .=   ' ' . shellescape(minlen)
 
     let completions = system(command)
     if v:shell_error == 0
