@@ -27,7 +27,7 @@ tr -s '[:space:]' '\n' |
 grep -o "\\w.*\\w" |
 # filter out words not beginning with pattern
 grep $4 "$1" |
-# filter-out short words
-awk '{ if (length($0) >= '"$(printf '%d' "${5:-4}")"') print }' |
+# filter out short words
+awk 'length($0) >= '$(printf '%d' "${5:-4}") |
 # sort and remove duplicates
 sort -u
