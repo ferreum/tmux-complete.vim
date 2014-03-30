@@ -30,10 +30,13 @@ function! tmuxcomplete#complete(findstart, base)
     if a:findstart
         let line = getline('.')
         let max = col('.') - 1
-        if get(g:, 'tmux_complete_mode', 'word') == 'WORD'
+        let mode = get(g:, 'tmux_complete_mode', 'word')
+        if mode ==# 'pattern'
+            return tmuxcomplete#findstart(line, max, get(g:, 'tmux_complete_match', '[[:alnum:]_]'))
+        elseif mode ==# 'WORD'
             return tmuxcomplete#findstartWORD(line, max)
         else
-            return tmuxcomplete#findstartword(line, max)
+            return tmuxcomplete#findstart(line, max, '[[:alnum:]_]')
         endif
     endif
     " find words matching with "a:base"
@@ -41,10 +44,10 @@ function! tmuxcomplete#complete(findstart, base)
     return tmuxcomplete#completions(a:base, capture_args)
 endfun
 
-function! tmuxcomplete#findstartword(line, max)
+function! tmuxcomplete#findstart(line, max, pat)
     let start = a:max
     " walk left upto first non word character
-    while start > 0 && a:line[start - 1] =~ '\a'
+    while start > 0 && a:line[start - 1] =~ a:pat
         let start -= 1
     endwhile
     return start
