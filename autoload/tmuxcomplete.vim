@@ -22,16 +22,17 @@ function! s:create_script(pattern, flags, list_args, capture_args, grep_args, mi
         " list all panes
         let s = 'tmux list-panes ' . list_args . " -F '#{window_active}-#{session_id} #{pane_id}'"
         " filter out current pane (use -F to match $ in session id)
-        let s .= ' | grep -v -F "$(tmux display-message -t "$TMUX_PANE" -p "1-#{session_id} ")"'
+        let s .= ' | grep -r -v -F "$(tmux display-message -t "$TMUX_PANE" -p "1-#{session_id} ")"'
         " take the pane id
         let s .= " | cut -d' ' -f2"
     else
         " list all panes
         let s = 'tmux list-panes ' . list_args . " -F '#{pane_id}'"
         " exclude current pane
-        let s .= ' | grep -v -F "$TMUX_PANE"'
+        let s .= ' | grep -r -v -F "$TMUX_PANE"'
     endif
     " capture panes
+    " TODO prevent capture-pane when no panes are listed
     let s .= printf(" | xargs -P0 -n1 tmux capture-pane %s -p -t", a:capture_args)
     " copy lines and split words
     let s .= " | sed -e 'p;s/[^a-zA-Z0-9_]/ /g'"
