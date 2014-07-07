@@ -3,10 +3,10 @@ function! tmuxcomplete#completions(base, flags)
     let script = s:create_script(
                 \ '^' . escape(a:base, '*^$][.\') . '.',
                 \ a:flags,
-                \ get(g:, 'tmux_complete_list_args', '-a'),
-                \ get(g:, 'tmux_complete_capture_args', '-J'),
-                \ get(g:, 'tmux_complete_grep_args', ''),
-                \ get(g:, 'tmux_complete_minlength', '4'))
+                \ get(g:, 'tmuxcomplete_list_args', '-a'),
+                \ get(g:, 'tmuxcomplete_capture_args', '-J'),
+                \ get(g:, 'tmuxcomplete_grep_args', ''),
+                \ get(g:, 'tmuxcomplete_minlength', '4'))
     let completions = systemlist(script)
     if v:shell_error == 0 && type(completions) == type([])
         return completions
@@ -17,7 +17,7 @@ endfunction
 
 function! s:create_script(pattern, flags, list_args, capture_args, grep_args, minlen) abort
     let list_args = a:list_args . ' '
-                \ . (a:flags =~# 'w' ? '' : get(g:, 'tmux_complete_list_select_args', '-a'))
+                \ . (a:flags =~# 'w' ? '' : get(g:, 'tmuxcomplete_list_select_args', '-a'))
     if a:flags =~# 'o'
         " list all panes
         let s = 'tmux list-panes ' . list_args . " -F '#{window_active}-#{session_id} #{pane_id}'"
@@ -56,9 +56,9 @@ endfun
 function! tmuxcomplete#findstart() abort
     let line = getline('.')
     let max = col('.') - 1
-    let mode = get(g:, 'tmux_complete_mode', 'pattern')
+    let mode = get(g:, 'tmuxcomplete_mode', 'pattern')
     if mode ==# 'pattern'
-        return s:findstart(line, max, get(g:, 'tmux_complete_match', '[[:alnum:]_]'))
+        return s:findstart(line, max, get(g:, 'tmuxcomplete_match', '[[:alnum:]_]'))
     elseif mode ==# 'WORD'
         return s:findstartWORD(line, max)
     else
