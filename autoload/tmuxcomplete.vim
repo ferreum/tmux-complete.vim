@@ -17,14 +17,16 @@ function! tmuxcomplete#completionsdicts(base, flags, rank)
     let res = []
 lua << EOF
     local p = io.popen(vim.eval"l:script")
-    local res, rank = vim.eval"l:res", vim.eval"a:rank"
-    for word in p:lines() do
-        local d = vim.dict()
-        d.rank = rank
-        d.word = word
-        res:add(d)
+    if p then
+        local res, rank = vim.eval"l:res", vim.eval"a:rank"
+        for word in p:lines() do
+            local d = vim.dict()
+            d.rank = rank
+            d.word = word
+            res:add(d)
+        end
+        p:close()
     end
-    p:close()
 EOF
     return res
 endfunction
