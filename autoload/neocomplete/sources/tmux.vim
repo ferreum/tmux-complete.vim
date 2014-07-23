@@ -10,7 +10,6 @@ let s:source = {
       \ 'name' : 'tmux',
       \ 'kind' : 'manual',
       \ 'mark' : '[tmux]',
-      \ 'volatile' : 0,
       \}
 
 function! s:source.get_complete_position(context) abort
@@ -18,7 +17,6 @@ function! s:source.get_complete_position(context) abort
 endfunction
 
 function! s:source.gather_candidates(context) abort
-   " BUG: need copy() here, otherwise map() cannot change the list
    if len(a:context.complete_str) >= get(g:, 'tmuxcomplete_complete_minlength', 2)
       return extend(
                \ tmuxcomplete#completionsdicts(a:context.complete_str, 'w', 4),
