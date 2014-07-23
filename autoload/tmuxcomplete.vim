@@ -16,7 +16,7 @@ function! tmuxcomplete#completionsdicts(base, flags, rank)
     let script = s:create_script(a:base, a:flags)
     let res = []
 lua << EOF
-    local p = io.popen(vim.eval"l:script")
+    local p = io.popen("exec 2>/dev/null; " .. vim.eval"l:script")
     if p then
         local res, rank = vim.eval"l:res", vim.eval"a:rank"
         for word in p:lines() do
