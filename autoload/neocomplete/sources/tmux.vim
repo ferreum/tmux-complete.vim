@@ -23,7 +23,6 @@ function! s:source.gather_candidates(context) abort
       return extend(
                \ tmuxcomplete#completionsdicts(a:context.complete_str, 'w', 4),
                \ tmuxcomplete#completionsdicts(a:context.complete_str, 'o', 3))
-      return ["works"]
    else
       return []
    endif
