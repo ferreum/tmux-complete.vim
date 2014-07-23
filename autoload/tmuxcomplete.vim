@@ -1,12 +1,15 @@
 
 function! tmuxcomplete#completions(base, flags)
-    let script = s:create_script(base, flags)
+    let script = s:create_script(a:base, a:flags)
     let res = []
 lua << EOF
-    local p = io.popen(vim.eval"l:script")
-    local res = vim.eval"l:res"
-    for word in p:lines() do
-        res:add(word)
+    local p = io.popen("exec 2>/dev/null; " .. vim.eval"l:script")
+    if p then
+        local res = vim.eval"l:res"
+        for word in p:lines() do
+            res:add(word)
+        end
+        p:close()
     end
 EOF
     return res
