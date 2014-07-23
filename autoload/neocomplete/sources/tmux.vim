@@ -1,7 +1,7 @@
 " File:        tmux.vim
 " Description: tmux
 " Created:     2014-07-07
-" Last Change: 2014-07-10
+" Last Change: 2014-07-23
 
 let s:save_cpo = &cpo
 set cpo&vim
@@ -21,8 +21,9 @@ function! s:source.gather_candidates(context) abort
    " BUG: need copy() here, otherwise map() cannot change the list
    if len(a:context.complete_str) >= get(g:, 'tmuxcomplete_complete_minlength', 2)
       return extend(
-               \ map(copy(tmuxcomplete#completions(a:context.complete_str, 'w')), "{'rank' : 4, 'word' : v:val}"),
-               \ map(copy(tmuxcomplete#completions(a:context.complete_str, 'o')), "{'rank' : 3, 'word' : v:val}"))
+               \ tmuxcomplete#completionsdicts(a:context.complete_str, 'w', 4),
+               \ tmuxcomplete#completionsdicts(a:context.complete_str, 'o', 3))
+      return ["works"]
    else
       return []
    endif

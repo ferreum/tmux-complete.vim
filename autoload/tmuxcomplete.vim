@@ -1,21 +1,34 @@
 
 function! tmuxcomplete#completions(base, flags)
-    let script = s:create_script(
-                \ '^' . escape(a:base, '*^$][.\') . '.',
-                \ a:flags,
-                \ get(g:, 'tmuxcomplete_list_args', '-a'),
-                \ get(g:, 'tmuxcomplete_capture_args', '-J'),
-                \ get(g:, 'tmuxcomplete_grep_args', ''),
-                \ get(g:, 'tmuxcomplete_minlength', '4'))
-    let completions = systemlist(script)
-    if v:shell_error == 0 && type(completions) == type([])
-        return completions
-    else
-        return []
-    endif
+    let script = s:create_script(base, flags)
+    let res = []
+lua << EOF
+    local p = io.popen(vim.eval"l:script")
+    local res = vim.eval"l:res"
+    for word in p:lines() do
+        res:add(word)
+    end
+EOF
+    return res
 endfunction
 
-function! s:create_script(pattern, flags, list_args, capture_args, grep_args, minlen) abort
+function! tmuxcomplete#completionsdicts(base, flags, rank)
+    let script = s:create_script(a:base, a:flags)
+    let res = []
+lua << EOF
+    local p = io.popen(vim.eval"l:script")
+    local res, rank = vim.eval"l:res", vim.eval"a:rank"
+    for word in p:lines() do
+        local d = vim.dict()
+        d.rank = rank
+        d.word = word
+        res:add(d)
+    end
+EOF
+    return res
+endfunction
+
+function! s:create_script_(pattern, flags, list_args, capture_args, grep_args, minlen) abort
     let list_args = a:list_args . ' '
                 \ . (a:flags =~# 'w' ? '' : get(g:, 'tmuxcomplete_list_select_args', '-a'))
     if a:flags =~# 'o'
@@ -44,6 +57,16 @@ function! s:create_script(pattern, flags, list_args, capture_args, grep_args, mi
     " filter out short words
     let s .= printf(" | awk 'length($0) >= %d'", a:minlen)
     return s
+endfunction
+
+function! s:create_script(base, flags) abort
+   return s:create_script_(
+                \ '^' . escape(a:base, '*^$][.\') . '.',
+                \ a:flags,
+                \ get(g:, 'tmuxcomplete_list_args', '-a'),
+                \ get(g:, 'tmuxcomplete_capture_args', '-J'),
+                \ get(g:, 'tmuxcomplete_grep_args', ''),
+                \ get(g:, 'tmuxcomplete_minlength', '4'))
 endfunction
 
 function! tmuxcomplete#complete(findstart, base)
