@@ -24,6 +24,7 @@ lua << EOF
         d.word = word
         res:add(d)
     end
+    p:close()
 EOF
     return res
 endfunction
