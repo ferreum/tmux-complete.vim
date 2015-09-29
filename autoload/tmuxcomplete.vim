@@ -1,5 +1,8 @@
 
 function! tmuxcomplete#completions(base, flags)
+    if empty($TMUX)
+        return []
+    end
     let script = s:create_script(a:base, a:flags)
     let res = []
 lua << EOF
@@ -16,6 +19,9 @@ EOF
 endfunction
 
 function! tmuxcomplete#completionsdicts(base, flags, rank)
+    if empty($TMUX)
+        return []
+    end
     let script = s:create_script(a:base, a:flags)
     let res = []
 lua << EOF
